@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jornal do Oriente Médio</title>
+<meta name="description" content="Jornal virtual do Oriente Médio: crise migratória no Iêmen e crise humanitária no Paquistão.">
+<style>
+  :root {
+    --bg: #f6f3ec;
+    --paper: #fffdf8;
+    --ink: #1d1d1f;
+    --muted: #6b6b70;
+    --accent: #b5452b;
+    --accent-2: #1f5f7a;
+    --line: #e2dccd;
+    --shadow: 0 1px 2px rgba(0,0,0,.05), 0 6px 20px rgba(0,0,0,.06);
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141416;
+      --paper: #1d1d21;
+      --ink: #ededf0;
+      --muted: #a2a2aa;
+      --accent: #ff8a6b;
+      --accent-2: #7cc4e0;
+      --line: #33333a;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 20px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141416;
+    --paper: #1d1d21;
+    --ink: #ededf0;
+    --muted: #a2a2aa;
+    --accent: #ff8a6b;
+    --accent-2: #7cc4e0;
+    --line: #33333a;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 20px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.7;
+  }
+  a { color: var(--accent-2); }
+  img, svg { max-width: 100%; }
+
+  /* barra de progresso de leitura */
+  #progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0;
+    background: var(--accent); z-index: 100; transition: width .1s linear;
+  }
+
+  /* navegação */
+  nav.top {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--sans);
+  }
+  nav.top .inner {
+    max-width: 1100px; margin: 0 auto; padding: 10px 16px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  nav.top .brand { font-weight: 700; margin-right: auto; color: var(--ink); text-decoration: none; }
+  nav.top a.link { color: var(--muted); text-decoration: none; font-size: 15px; padding: 4px 2px; }
+  nav.top a.link:hover { color: var(--accent); }
+  button {
+    font: inherit; font-family: var(--sans); font-size: 14px;
+    border: 1px solid var(--line); background: var(--paper); color: var(--ink);
+    border-radius: 999px; padding: 6px 14px; cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); color: var(--accent); }
+  button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* cabeçalho do jornal */
+  header.masthead {
+    max-width: 1100px; margin: 0 auto; padding: 36px 16px 20px; text-align: center;
+    border-bottom: 3px double var(--ink);
+  }
+  .masthead h1 {
+    font-family: var(--serif); font-size: clamp(2.2rem, 6vw, 4rem);
+    margin: 0; letter-spacing: .02em; line-height: 1.1;
+  }
+  .masthead .meta {
+    font-family: var(--sans); color: var(--muted); font-size: 14px;
+    margin-top: 12px; display: flex; justify-content: center; gap: 10px 22px; flex-wrap: wrap;
+  }
+  .masthead .authors { font-family: var(--sans); font-size: 14px; color: var(--muted); margin-top: 8px; }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 64px; }
+
+  /* filtros */
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 24px; font-family: var(--sans); }
+
+  /* estatísticas */
+  .stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px; margin-bottom: 36px;
+  }
+  .stat {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px; box-shadow: var(--shadow); font-family: var(--sans);
+  }
+  .stat .num { font-size: 1.7rem; font-weight: 700; color: var(--accent); line-height: 1.2; }
+  .stat .label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  /* artigos */
+  article.post {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 14px;
+    box-shadow: var(--shadow); padding: 28px clamp(18px, 4vw, 40px); margin-bottom: 32px;
+  }
+  article.post[hidden] { display: none; }
+  .kicker {
+    font-family: var(--sans); font-size: 13px; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--accent); font-weight: 700;
+  }
+  article.post h2 {
+    font-size: clamp(1.7rem, 4vw, 2.4rem); line-height: 1.2; margin: 8px 0 10px;
+  }
+  .dek { font-size: 1.2rem; color: var(--muted); font-style: italic; margin: 0 0 16px; }
+  .byline {
+    font-family: var(--sans); font-size: 14px; color: var(--muted);
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    padding: 8px 0; margin-bottom: 22px; display: flex; gap: 12px; flex-wrap: wrap;
+    justify-content: space-between; align-items: center;
+  }
+  article.post h3 {
+    font-family: var(--sans); font-size: 1.05rem; margin: 26px 0 8px; color: var(--accent-2);
+  }
+  article.post p { margin: 0 0 14px; }
+  .cols { columns: 2 280px; column-gap: 32px; }
+  .cols p { break-inside: avoid; }
+  .note {
+    font-family: var(--sans); font-size: 14px; border-left: 4px solid var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    padding: 10px 14px; border-radius: 6px; margin: 18px 0; color: var(--ink);
+  }
+  blockquote {
+    margin: 22px 0; padding: 4px 0 4px 18px; border-left: 3px solid var(--accent-2);
+    font-size: 1.15rem; font-style: italic;
+  }
+  .fig {
+    font-family: var(--sans); font-size: 14px; color: var(--muted);
+    background: var(--bg); border: 1px dashed var(--line); border-radius: 10px;
+    padding: 14px; margin: 18px 0;
+  }
+  .fig strong { color: var(--ink); }
+  .fig img {
+    display: block; width: 100%; max-width: 760px; height: auto;
+    margin: 12px auto 6px; border-radius: 6px;
+  }
+  .fig .caption { font-size: 12px; color: var(--muted); text-align: center; }
+
+  /* botões de ação dos artigos */
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; font-family: var(--sans); }
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(120px);
+    background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 999px;
+    font-family: var(--sans); font-size: 14px; transition: transform .3s; z-index: 60;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* bibliografia */
+  section.sources {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 14px;
+    padding: 24px clamp(18px, 4vw, 40px); box-shadow: var(--shadow); font-family: var(--sans);
+  }
+  section.sources h2 { font-family: var(--serif); margin-top: 0; }
+  section.sources ol { padding-left: 20px; }
+  section.sources li { margin-bottom: 10px; font-size: 14px; word-break: break-all; }
+
+  footer {
+    text-align: center; font-family: var(--sans); font-size: 13px; color: var(--muted);
+    padding: 24px 16px 40px;
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 17px; }
+    .cols { columns: 1; }
+    nav.top .brand { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    #progress, .toast { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress" aria-hidden="true"></div>
+
+<nav class="top">
+  <div class="inner">
+    <a class="brand" href="#topo">Jornal do Oriente Médio</a>
+    <a class="link" href="#iemen">Iêmen</a>
+    <a class="link" href="#paquistao">Paquistão</a>
+    <a class="link" href="#fontes">Fontes</a>
+    <button id="themeBtn" type="button" aria-label="Alternar tema claro/escuro">Tema escuro</button>
+  </div>
+</nav>
+
+<header class="masthead" id="topo">
+  <h1>Jornal do Oriente Médio</h1>
+  <div class="meta">
+    <span>Colégio Militar de Juiz de Fora</span>
+    <span>Segunda-feira, 19 de outubro de 2026</span>
+  </div>
+  <div class="authors">
+    Alunos: Barreto (3355), Almeida (3430), Davi Gomes (3367), João Pedrett (3493), Martins (3602)
+  </div>
+</header>
+
+<main>
+
+  <div class="filters" role="group" aria-label="Filtrar matérias">
+    <button type="button" data-filter="all" aria-pressed="true">Todas</button>
+    <button type="button" data-filter="iemen" aria-pressed="false">Iêmen</button>
+    <button type="button" data-filter="paquistao" aria-pressed="false">Paquistão</button>
+  </div>
+
+  <div class="stats" id="stats">
+    <div class="stat"><div class="num" data-count="200" data-suffix=" mil">0</div><div class="label">pessoas forçadas a deixar suas casas no Iêmen desde agosto</div></div>
+    <div class="stat"><div class="num" data-count="8" data-suffix=" mil">0</div><div class="label">casos suspeitos de cólera no Iêmen em 2026</div></div>
+    <div class="stat"><div class="num" data-count="22" data-suffix=" mil">0</div><div class="label">casos de sarampo registrados no Iêmen</div></div>
+    <div class="stat"><div class="num" data-count="18" data-suffix=" milhões">0</div><div class="label">pessoas com insegurança alimentar aguda no Iêmen</div></div>
+    <div class="stat"><div class="num" data-count="2.2" data-suffix=" milhões" data-decimals="1">0</div><div class="label">crianças menores de 5 anos com desnutrição aguda</div></div>
+    <div class="stat"><div class="num" data-count="71" data-suffix="">0</div><div class="label">funcionários da ONU e de ONGs detidos pelos houthis</div></div>
+    <div class="stat"><div class="num" data-count="31" data-suffix=" mi US$">0</div><div class="label">necessários no plano de emergência da OMS (recebeu menos de 14%)</div></div>
+  </div>
+
+  <!-- MATÉRIA 1 -->
+  <article class="post" id="iemen" data-cat="iemen">
+    <div class="kicker">Internacional · Oriente Médio</div>
+    <h2>Crise migratória no Iêmen</h2>
+    <p class="dek">Ataques contra a Arábia Saudita aumentam e cidade de Taiz fica sem ajuda; ONU alerta para fome e doenças</p>
+    <div class="byline">
+      <span>Jornal do Oriente Médio · 19/10/2026</span>
+      <div class="actions">
+        <button type="button" data-copy="iemen">Copiar link da matéria</button>
+      </div>
+    </div>
+
+    <p>Os combates no Iêmen estão deixando milhares de pessoas isoladas e sem ajuda humanitária. Ao mesmo tempo, os houthis, grupo armado apoiado pelo Irã, ampliaram os ataques contra a Arábia Saudita. A Organização das Nações Unidas (ONU) avisa que o país corre risco de desnutrição, surtos de cólera e colapso dos serviços de saúde.</p>
+
+    <h3>Ataques contra a Arábia Saudita</h3>
+    <div class="cols">
+      <p>Os houthis lançaram mísseis balísticos, mísseis de cruzeiro e drones contra a Arábia Saudita. Os alvos foram a Aramco, empresa estatal de petróleo, e o aeroporto internacional King Khalid.</p>
+      <p>Segundo a notícia, os ataques foram uma resposta aos bombardeios contra depósitos de combustível em Sanaa e no porto de Ras Isa.</p>
+      <p>O porta-voz militar dos houthis, Yahya Sarea, afirmou que as operações vão continuar nos próximos dias. O Gabinete Saudita, presidido pelo príncipe herdeiro Mohammed bin Salman, declarou que o grupo sofrerá as consequências.</p>
+    </div>
+
+    <h3>Surtos de doenças</h3>
+    <div class="cols">
+      <p>Mais de 200 mil pessoas foram forçadas a deixar suas casas desde agosto. Nesse cenário, o Iêmen enfrenta um surto de cólera, com mais de 8 mil casos suspeitos e 27 mortes em 2026. Também foram registrados mais de 22 mil casos de sarampo.</p>
+      <p>A Organização Mundial da Saúde (OMS) alertou que os hospitais estão perto do limite. Os centros de saúde pequenos recebem cerca de 700 feridos por semana, e aproximadamente 500 unidades das províncias afetadas estão sem apoio de parceiros internacionais. O plano de emergência da OMS precisa de 31 milhões de dólares, mas recebeu menos de 14% desse valor.</p>
+    </div>
+
+    <h3>Apelos e impasse</h3>
+    <blockquote>“Os efeitos do conflito serão sentidos no mundo todo, por causa da importância do Iêmen para o mercado de energia.”<br><span style="font-size:.95rem;font-style:normal;color:var(--muted)">Kristalina Georgieva, diretora-geral do Fundo Monetário Internacional (FMI)</span></blockquote>
+    <p>A ONU avisa que, com o fim do cessar-fogo de quatro anos e a falta de recursos para a ajuda humanitária, a crise no Iêmen tende a se agravar.</p>
+
+    <h3>Fome atinge milhões</h3>
+    <p>No país inteiro, mais de 18 milhões de pessoas enfrentam insegurança alimentar aguda, e 2,2 milhões de crianças menores de 5 anos sofrem de desnutrição aguda.</p>
+    <p>O trabalho do Programa Mundial de Alimentos (WFP) também foi prejudicado por invasões de escritórios e perda de equipamentos. Além disso, as autoridades houthis mantêm 71 funcionários da ONU e de organizações não governamentais (ONGs) detidos.</p>
+
+    <div class="fig">
+      <strong>Imagem 01 · Mapa do Iêmen</strong>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Yemen%2C_administrative_divisions_-_es_-_colored_%282000-2004%29.svg/960px-Yemen%2C_administrative_divisions_-_es_-_colored_%282000-2004%29.svg.png"
+           alt="Mapa do Iêmen com suas divisões administrativas"
+           loading="lazy">
+      <div class="caption">Mapa das divisões administrativas do Iêmen. Fonte: Wikimedia Commons.</div>
+    </div>
+  </article>
+
+  <!-- MATÉRIA 2 -->
+  <article class="post" id="paquistao" data-cat="paquistao">
+    <div class="kicker">Internacional · Ásia</div>
+    <h2>Crise humanitária no Paquistão</h2>
+
+    <div class="byline">
+      <span>Jornal do Oriente Médio · 19/10/2026</span>
+      <div class="actions">
+        <button type="button" data-copy="paquistao">Copiar link da matéria</button>
+      </div>
+    </div>
+
+    <div class="fig">
+      <strong>Imagem 02 · Mapa do Paquistão</strong>
+      <img src="https://freevector-images.s3.amazonaws.com/uploads/vector/preview/166082/vecteezycolorful-country-map-pakistansy0223_generated.jpg"
+           alt="Mapa político do Paquistão com províncias e capitais"
+           loading="lazy">
+      <div class="caption">Mapa político do Paquistão com províncias e capitais. Fonte: Vector4Free.</div>
+    </div>
+  </article>
+
+  <!-- HISTÓRIA DO PAQUISTÃO / RELATO -->
+  <article class="post" id="karim" data-cat="paquistao">
+    <div class="kicker">Perseguição religiosa · Oriente Médio</div>
+    <h2>A fuga de Karim</h2>
+    <p class="dek">Um líder cristão na Península Arábica recebeu ameaças de morte e precisou deixar a família para trás.</p>
+
+    <h3>Ameaças e decisão difícil</h3>
+    <p>Karim (pseudônimo), um líder cristão que atua na Península Arábica, recebeu ameaças diretas de morte de um grupo não identificado. As forças de segurança de sua cidade afirmaram que não podem protegê-lo e recomendaram que ele deixasse a região no Oriente Médio imediatamente.</p>
+    <p>Casado e pai de quatro filhos, Karim precisou tomar uma decisão difícil. Há poucos dias, ele reuniu alguns itens essenciais e fugiu de sua casa, deixando para trás sua esposa e seus filhos. Mesmo diante do medo e da incerteza, especialmente por estar separado da família, Karim afirma confiar no Senhor e pede orações neste momento crítico.</p>
+    <blockquote>Esse caso evidencia a realidade de muitos cristãos que vivem sob pressão extrema na região onde a fé pode colocar vidas em risco.</blockquote>
+    <div class="actions">
+      <button type="button" data-copy="karim">Copiar link da matéria</button>
+    </div>
+  </article>
+
+  <!-- FONTES -->
+  <section class="sources" id="fontes">
+    <h2>Bibliografia e imagens</h2>
+    <ol>
+      <li>Matéria 01 (ONU): <a href="https://news.un.org/pt/story/2026/10/1854644" target="_blank" rel="noopener">https://news.un.org/pt/story/2026/10/1854644</a></li>
+      <li>Matéria 02 (CNN Brasil): <a href="https://www.cnnbrasil.com.br/internacional/paquistao-suspende-canal-por-15-dias-por-transmissao-religiosa-ofensiva/" target="_blank" rel="noopener">https://www.cnnbrasil.com.br/internacional/paquistao-suspende-canal-por-15-dias-por-transmissao-religiosa-ofensiva/</a></li>
+      <li>Matéria 03 (Portas Abertas): <a href="https://portasabertas.org.br/noticias/cristaos-perseguidos/fe-em-perigo-no-oriente-medio/" target="_blank" rel="noopener">https://portasabertas.org.br/noticias/cristaos-perseguidos/fe-em-perigo-no-oriente-medio/</a></li>
+      <li>Imagem 01 (Mapa do Iêmen): <a href="https://www.google.com/maps" target="_blank" rel="noopener">Google Maps</a></li>
+      <li>Imagem 02 (Mapa do Paquistão): <a href="https://share.google/rj1jR3DSGeqGEqGaD" target="_blank" rel="noopener">https://share.google/rj1jR3DSGeqGEqGaD</a></li>
+      <li>Imagem 03: <a href="https://brasilescola.uol.com.br/geografia/paquistao.htm" target="_blank" rel="noopener">https://brasilescola.uol.com.br/geografia/paquistao.htm</a></li>
+    </ol>
+  </section>
+
+</main>
+
+<footer>Jornal do Oriente Médio · Colégio Militar de Juiz de Fora · 19 de outubro de 2026</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  // barra de progresso
+  const bar = document.getElementById('progress');
+  function updateProgress() {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // tema claro/escuro
+  const themeBtn = document.getElementById('themeBtn');
+  function currentTheme() {
+    const attr = document.documentElement.getAttribute('data-theme');
+    if (attr) return attr;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    themeBtn.textContent = t === 'dark' ? 'Tema claro' : 'Tema escuro';
+  }
+  try {
+    const saved = localStorage.getItem('jornal-tema');
+    if (saved) applyTheme(saved);
+    else applyTheme(currentTheme());
+  } catch (e) { applyTheme(currentTheme()); }
+  themeBtn.addEventListener('click', () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    try { localStorage.setItem('jornal-tema', next); } catch (e) {}
+  });
+
+  // filtro por categoria
+  const filterBtns = document.querySelectorAll('[data-filter]');
+  const posts = document.querySelectorAll('article.post');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const f = btn.dataset.filter;
+      filterBtns.forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+      posts.forEach(p => { p.hidden = !(f === 'all' || p.dataset.cat === f); });
+    });
+  });
+
+  // copiar link de cada matéria
+  const toast = document.getElementById('toast');
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+  document.querySelectorAll('[data-copy]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const url = location.href.split('#')[0] + '#' + btn.dataset.copy;
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast('Link copiado');
+      } catch (e) {
+        showToast(url);
+      }
+    });
+  });
+
+  // contadores animados nas estatísticas
+  const statNums = document.querySelectorAll('.stat .num');
+  function animate(el) {
+    const target = parseFloat(el.dataset.count);
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    const suffix = el.dataset.suffix || '';
+    const dur = 1200;
+    const start = performance.now();
+    function frame(now) {
+      const p = Math.min((now - start) / dur, 1);
+      const val = target * (1 - Math.pow(1 - p, 3));
+      el.textContent = val.toLocaleString('pt-BR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
+      if (p < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { animate(e.target); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.5 });
+    statNums.forEach(el => io.observe(el));
+  } else {
+    statNums.forEach(animate);
+  }
+</script>
+</body>
+</html>
